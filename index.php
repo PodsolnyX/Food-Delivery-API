@@ -1,0 +1,27 @@
+<?php
+
+    $link = mysqli_connect("127.0.0.1", "backend", "password", "deliveryFood");
+
+    if (!$link) {
+        echo "Ошибка: Невозможно установить соединение с MySQL." . PHP_EOL;
+        echo "Код ошибки errno: " . mysqli_connect_errno() . PHP_EOL;
+        echo "Код ошибки error: " . mysqli_connect_error() . PHP_EOL;
+        exit;
+    }
+
+    $res = $link->query("SELECT idUser, fullName FROM user ORDER BY idUser");
+
+    if (!$res) {
+        echo "Не удалось выполнить запрос: (" . $mysqli->errno . ") " . $mysqli->error;
+    }
+    else {
+        while ($row = $res->fetch_assoc()) {
+            $message["user"][] = [
+                "id" => $row['idUser'],
+                "fullName" => $row['fullName']
+            ];
+        }
+    }
+    echo json_encode($message);
+
+?>
