@@ -1,10 +1,14 @@
-<IfModule dir_module>
-    DirectoryIndex index.php index.html
-</IfModule>
+<IfModule mod_rewrite.c>
+    
+RewriteEngine on
+
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)$ index.php?q=$1 [L,QSA]
+
 AddDefaultCharset UTF-8
-AddCharset UTF-8 .html
-<FilesMatch "\.(html)$">
-   Header set Cache-Control: "no-cache, no-store"
-   Header unset ETag
-</FilesMatch>
-Header set X-Content-Type-Options nosniff
+
+php_flag display_errors on
+
+</IfModule>
