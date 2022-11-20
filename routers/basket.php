@@ -1,13 +1,14 @@
 <?php
 
     function route($method, $urlList, $requestData) {
+        include_once 'scripts/responses.php';
         switch ($method) {
             case 'POST':
                 if ($urlList[2] == 'dish' && $urlList[4] == null) {
                     echo 'api/basket/dish/{dishId}';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
             
@@ -16,7 +17,7 @@
                     echo 'api/basket';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
 
@@ -25,12 +26,12 @@
                     echo 'api/basket/dish/{dishId}';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
 
             default:
-                echo '404';
+                responseNotFound();
                 break;
         }
     }

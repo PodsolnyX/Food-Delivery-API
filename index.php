@@ -21,6 +21,8 @@
     }
 
     header('Content-type: application/json');
+    include_once 'scripts/responses.php';
+
     $link = mysqli_connect("127.0.0.1", "backend", "password", "deliveryFood");
 
     if (!$link) {
@@ -59,11 +61,11 @@
             route($method, $urlList, $requestData); 
         }
         else {
-            echo "404";
+            responseNotFound();
         }
     }
     else {
-        echo "404";
+        responseNotFound();
     }
 
     

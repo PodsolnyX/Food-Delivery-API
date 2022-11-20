@@ -1,6 +1,7 @@
 <?php
 
     function route($method, $urlList, $requestData) {
+        include_once 'scripts/responses.php';
         if ($urlList[3] == null) {
             switch ($method) {
                 case 'POST':
@@ -18,7 +19,7 @@
                             break;
                         
                         default:
-                            echo '404';
+                            responseNotFound();
                             break;
                     }
                     break;
@@ -28,7 +29,7 @@
                         echo 'api/account/profile';
                     }
                     else {
-                        echo '404';
+                        responseNotFound();
                     }
                     break;
     
@@ -37,17 +38,17 @@
                         echo 'api/account/profile';
                     }
                     else {
-                        echo '404';
+                        responseNotFound();
                     }
                     break;
     
                 default:
-                    echo '404';
+                    responseNotFound();
                     break;
             }
         }
         else {
-            echo '404';
+            responseNotFound();
         }
     }
 

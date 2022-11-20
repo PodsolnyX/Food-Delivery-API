@@ -1,6 +1,7 @@
 <?php
 
     function route($method, $urlList, $requestData) {
+        include_once 'scripts/responses.php';
         switch ($method) {
             case 'POST':
                 if ($urlList[2] == null) {
@@ -10,7 +11,7 @@
                     echo 'api/order/{id}/status';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
             
@@ -22,12 +23,12 @@
                     echo 'api/order/{id}';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
 
             default:
-                echo '404';
+                responseNotFound();
                 break;
         }
     }

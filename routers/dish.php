@@ -1,13 +1,14 @@
 <?php
 
     function route($method, $urlList, $requestData) {
+        include_once 'scripts/responses.php';
         switch ($method) {
             case 'POST':
                 if ($urlList[3] == 'rating' && $urlList[4] == null){
                     echo 'api/dish/{id}/rating';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
             
@@ -22,12 +23,12 @@
                     echo 'api/dish/{id}/rating/check';
                 }
                 else {
-                    echo '404';
+                    responseNotFound();
                 }
                 break;
 
             default:
-                echo '404';
+                responseNotFound();
                 break;
         }
     }
