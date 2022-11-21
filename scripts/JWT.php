@@ -39,6 +39,6 @@
 
     function isValid($token) {
         $tokenList = explode('.', $token);
-        return $tokenList == 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+        return $tokenList[0] == 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
     }
 ?>

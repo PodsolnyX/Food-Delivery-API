@@ -1,6 +1,7 @@
 <?php
 
 include_once 'scripts/responses.php';
+include_once 'scripts/JWT.php';
 include_once 'scripts/connectDB.php';
 
     function route($method, $urlList, $requestData) {
@@ -13,7 +14,7 @@ include_once 'scripts/connectDB.php';
                             break;
     
                         case 'login':
-                            echo 'api/account/login';
+                            loginUser($requestData);
                             break;
     
                         case 'logout':
@@ -54,6 +55,37 @@ include_once 'scripts/connectDB.php';
         }
     }
 
+    function loginUser($requestData) {
+        $link = connectToDataBase();
+
+        $email = $requestData->body->email;
+
+        $user = $link->query("SELECT email, password FROM user WHERE email = '$email'")->fetch_assoc();
+
+        if (is_null($user)) {
+            $response = [
+                "status" => '401',
+                "message" => 'Incorrect username or password'
+            ];
+            echo json_encode($response);
+        }
+        else {
+            if (hash("sha1", $requestData->body->password) == $user["password"]) {
+                $response = [
+                    "token" => generateToken($email)
+                ];
+                echo json_encode($response);
+            }
+            else {
+                $response = [
+                    "status" => '401',
+                    "message" => 'Incorrect username or password'
+                ];
+                echo json_encode($response);
+            }
+        }
+    }
+
     function registerUser($requestData) {
         $link = connectToDataBase();
 
@@ -78,18 +110,18 @@ include_once 'scripts/connectDB.php';
                     echo json_encode($link->error);
                 }
                 else {
-                    $message = [
-                        "token" => 'null'
+                    $response = [
+                        "token" => generateToken($email)
                     ];
-                    echo json_encode($message);
+                    echo json_encode($response);
                 }
         }
         else {
-            $message = [
+            $response = [
                 "status" => '409',
                 "message" => 'Account already exists'
             ];
-            echo json_encode($message);
+            echo json_encode($response);
         }
     }
 
