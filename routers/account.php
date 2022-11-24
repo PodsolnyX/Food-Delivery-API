@@ -1,8 +1,9 @@
 <?php
 
 include_once 'scripts/responses.php';
-include_once 'scripts/JWT.php';
-include_once 'scripts/connectDB.php';
+include_once 'scripts/scriptsAPI/userRegister.php';
+include_once 'scripts/scriptsAPI/userLogin.php';
+include_once 'scripts/scriptsAPI/userLogout.php';
 
     function route($method, $urlList, $requestData) {
         if ($urlList[3] == null) {
@@ -18,7 +19,7 @@ include_once 'scripts/connectDB.php';
                             break;
     
                         case 'logout':
-                            echo 'api/account/logout';
+                            logoutUser();
                             break;
                         
                         default:
@@ -52,76 +53,6 @@ include_once 'scripts/connectDB.php';
         }
         else {
             responseNotFound();
-        }
-    }
-
-    function loginUser($requestData) {
-        $link = connectToDataBase();
-
-        $email = $requestData->body->email;
-
-        $user = $link->query("SELECT email, password FROM user WHERE email = '$email'")->fetch_assoc();
-
-        if (is_null($user)) {
-            $response = [
-                "status" => '401',
-                "message" => 'Incorrect username or password'
-            ];
-            echo json_encode($response);
-        }
-        else {
-            if (hash("sha1", $requestData->body->password) == $user["password"]) {
-                $response = [
-                    "token" => generateToken($email)
-                ];
-                echo json_encode($response);
-            }
-            else {
-                $response = [
-                    "status" => '401',
-                    "message" => 'Incorrect username or password'
-                ];
-                echo json_encode($response);
-            }
-        }
-    }
-
-    function registerUser($requestData) {
-        $link = connectToDataBase();
-
-        $email = $requestData->body->email;
-
-        $user = $link->query("SELECT email FROM user WHERE email = '$email'")->fetch_assoc();
-
-        if (is_null($user)) {
-            $idUser = uniqid();
-            $password = hash("sha1", $requestData->body->password);
-            $fullName = $requestData->body->fullName;
-            $address = $requestData->body->address;
-            $birthDate = substr($requestData->body->birthDate, 0, 10);
-            $gender = $requestData->body->gender;
-            $phoneNumber = $requestData->body->phoneNumber;
-
-            $userInsertResult = $link->query(
-                "INSERT INTO user(idUser, fullName, birthDate, gender, address, email, phoneNumber, password) 
-                VALUES ('$idUser', '$fullName', '$birthDate', '$gender', '$address', '$email', '$phoneNumber', '$password')");
-
-                if (!$userInsertResult) {
-                    echo json_encode($link->error);
-                }
-                else {
-                    $response = [
-                        "token" => generateToken($email)
-                    ];
-                    echo json_encode($response);
-                }
-        }
-        else {
-            $response = [
-                "status" => '409',
-                "message" => 'Account already exists'
-            ];
-            echo json_encode($response);
         }
     }
 

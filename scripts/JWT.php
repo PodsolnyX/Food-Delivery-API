@@ -31,7 +31,7 @@
         return json_decode(base64_decode($tokenList[1]), true);
     }
 
-    function isExired($token) {
+    function isExpired($token) {
         $payload = getPayload($token);
         $nowTime = new DateTime();
         return $payload['exp'] < $nowTime->getTimestamp();
