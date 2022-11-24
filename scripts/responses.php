@@ -24,6 +24,14 @@
         echo json_encode($response);
     }
 
+    function responseUnauthorized() {
+        $response = [
+            "status" => '401',
+            "message" => 'Unauthorized'
+        ];
+        echo json_encode($response);
+    }
+
     function responseNotFound() {
         $response = [
             "status" => '404',
