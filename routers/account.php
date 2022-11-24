@@ -1,21 +1,25 @@
 <?php
 
+include_once 'scripts/responses.php';
+include_once 'scripts/scriptsAPI/userRegister.php';
+include_once 'scripts/scriptsAPI/userLogin.php';
+include_once 'scripts/scriptsAPI/userLogout.php';
+
     function route($method, $urlList, $requestData) {
-        include_once 'scripts/responses.php';
         if ($urlList[3] == null) {
             switch ($method) {
                 case 'POST':
                     switch ($urlList[2]) {
                         case 'register':
-                            echo 'api/account/register';
+                            registerUser($requestData);
                             break;
     
                         case 'login':
-                            echo 'api/account/login';
+                            loginUser($requestData);
                             break;
     
                         case 'logout':
-                            echo 'api/account/logout';
+                            logoutUser();
                             break;
                         
                         default:
