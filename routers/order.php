@@ -1,5 +1,7 @@
 <?php
 
+include_once 'scripts/scriptsAPI/orderGet.php';
+
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
         switch ($method) {
@@ -20,7 +22,7 @@
                     echo 'api/order';
                 }
                 else if ($urlList[3] == null) {
-                    echo 'api/order/{id}';
+                    getOrder($urlList[2]);
                 }
                 else {
                     responseNotFound();
