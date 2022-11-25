@@ -6,7 +6,7 @@
 
     function setRatingDish($idDish, $ratingScore) {
 
-        if ($ratingScore < 0 && $ratingScore > 10) {
+        if ($ratingScore < 0 || $ratingScore > 10) {
             $response = [
                 "status" => '401',
                 "message" => 'Incorrect rating score'
@@ -44,10 +44,27 @@
             $idUser = $resultUser["idUser"];
 
             if ($idUser != null) {
-                $result = $link->query(
-                    "INSERT INTO rating(idUser, idDish, rating) 
-                    VALUES ('$idUser', '$idDish', '$ratingScore')");
-                echo json_encode($link->error);
+
+                $resultRating = $link->query(
+                "SELECT rating.rating FROM rating 
+                WHERE idUser = '$idUser' AND idDish = '$idDish'")->fetch_assoc();
+
+                $currentRating = $resultRating["rating"];
+
+                if ($currentRating == null) {
+                    $result = $link->query(
+                        "INSERT INTO rating(idUser, idDish, rating) 
+                        VALUES ('$idUser', '$idDish', '$ratingScore')");
+                    echo json_encode($link->error);
+                    http_response_code(200);
+                }
+                else {
+                    $result = $link->query(
+                        "UPDATE rating SET rating = '$ratingScore' 
+                        WHERE idUser = '$idUser' AND idDish = '$idDish'");
+                    echo json_encode($link->error);
+                    http_response_code(200);
+                }
             }
             else {
                 $response = [
