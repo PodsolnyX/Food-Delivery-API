@@ -1,5 +1,7 @@
 <?php
 
+    include_once 'scripts/scriptsAPI/basketGetList.php';
+
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
         switch ($method) {
@@ -14,7 +16,7 @@
             
             case 'GET':
                 if ($urlList[2] == null) {
-                    echo 'api/basket';
+                    getBasketList();
                 }
                 else {
                     responseNotFound();
