@@ -14,17 +14,15 @@
         
         if (!isExpired($token) && isValid($token) && $result == null) {
 
-            $resultOrder = $link->query("SELECT * FROM `order` WHERE idOrder = '$idOrder'")->fetch_assoc();
+            $email = getPayload($token)["email"];
+
+            $resultUser = $link->query("SELECT user.idUser FROM user WHERE email = '$email'")->fetch_assoc();
+
+            $currentUser = $resultUser["idUser"];
+
+            $resultOrder = $link->query("SELECT * FROM `order` WHERE idOrder = '$idOrder' AND idUser = '$currentUser'")->fetch_assoc();
 
             if ($resultOrder != null) {
-
-                $email = getPayload($token)["email"];
-
-                $resultUser = $link->query(
-                    "SELECT user.idUser FROM user 
-                    WHERE email = '$email'")->fetch_assoc();
-
-                $currentUser = $resultUser["idUser"];
 
                 $resultBasket = $link->query(
                     "SELECT dish.idDish, name, price, amount, image FROM dish_basket
