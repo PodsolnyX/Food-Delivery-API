@@ -1,5 +1,7 @@
 <?php
 
+    include_once 'scripts/scriptsAPI/orderConfirmStatus.php';
+
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
         switch ($method) {
@@ -8,7 +10,7 @@
                     echo 'api/order';
                 }
                 else if ($urlList[3] == 'status' && $urlList[4] == null){
-                    echo 'api/order/{id}/status';
+                    confirmOrderStatus($urlList[2]);
                 }
                 else {
                     responseNotFound();
