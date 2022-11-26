@@ -39,7 +39,7 @@
             $resultUser = $link->query(
             "SELECT user.idUser FROM user 
             INNER JOIN dish_basket on user.idUser = dish_basket.idUser
-            WHERE email = '$email' AND idDish = '$idDish'")->fetch_assoc();
+            WHERE email = '$email' AND idDish = '$idDish' AND idOrder IS NOT NULL")->fetch_assoc();
 
             $idUser = $resultUser["idUser"];
 
@@ -65,6 +65,13 @@
                     echo json_encode($link->error);
                     http_response_code(200);
                 }
+
+                $result = $link->query("SELECT AVG(rating) AS totalRating FROM rating WHERE idDish = '$idDish' GROUP BY idDish")->fetch_assoc();
+                echo json_encode($link->error);
+                $totalRating = $result['totalRating'];
+                $result = $link->query("UPDATE dish SET rating = $totalRating WHERE idDish = '$idDish'");
+                echo json_encode($link->error);
+
             }
             else {
                 $response = [
