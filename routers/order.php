@@ -3,6 +3,7 @@
     include_once 'scripts/scriptsAPI/orderGet.php';
     include_once 'scripts/scriptsAPI/orderGetList.php';
     include_once 'scripts/scriptsAPI/orderCreate.php';
+    include_once 'scripts/scriptsAPI/orderConfirmStatus.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -12,7 +13,7 @@
                     createOrder($requestData);
                 }
                 else if ($urlList[3] == 'status' && $urlList[4] == null){
-                    echo 'api/order/{id}/status';
+                    confirmOrderStatus($urlList[2]);
                 }
                 else {
                     responseNotFound();
