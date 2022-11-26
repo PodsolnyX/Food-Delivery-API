@@ -1,13 +1,14 @@
 <?php
 
     include_once 'scripts/scriptsAPI/basketGetList.php';
+    include_once 'scripts/scriptsAPI/basketSetDish.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
         switch ($method) {
             case 'POST':
                 if ($urlList[2] == 'dish' && $urlList[4] == null) {
-                    echo 'api/basket/dish/{dishId}';
+                    addDishToBasket($urlList[3]);
                 }
                 else {
                     responseNotFound();
