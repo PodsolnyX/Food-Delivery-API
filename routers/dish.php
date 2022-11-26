@@ -4,6 +4,8 @@
     include_once 'scripts/scriptsAPI/dishGetInfo.php';
     include_once 'scripts/scriptsAPI/dishSetRating.php';
     include_once 'scripts/scriptsAPI/dishCheckRating.php';
+    include_once 'scripts/scriptsAPI/dishGetList.php';
+
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -19,7 +21,7 @@
             
             case 'GET':
                 if ($urlList[2] == null) {
-                    echo 'api/dish';
+                    getDishList($_SERVER['REQUEST_URI']);
                 }
                 else if ($urlList[3] == null) {
                     getDishInfo($urlList[2]);
