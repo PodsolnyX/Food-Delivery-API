@@ -1,6 +1,7 @@
 <?php
 
-include_once 'scripts/scriptsAPI/orderGet.php';
+    include_once 'scripts/scriptsAPI/orderGet.php';
+    include_once 'scripts/scriptsAPI/orderGetList.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -19,7 +20,7 @@ include_once 'scripts/scriptsAPI/orderGet.php';
             
             case 'GET':
                 if ($urlList[2] == null) {
-                    echo 'api/order';
+                    getListOrder();
                 }
                 else if ($urlList[3] == null) {
                     getOrder($urlList[2]);
