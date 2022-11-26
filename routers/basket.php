@@ -2,6 +2,7 @@
 
     include_once 'scripts/scriptsAPI/basketGetList.php';
     include_once 'scripts/scriptsAPI/basketSetDish.php';
+    include_once 'scripts/scriptsAPI/basketDeleteDish.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -26,7 +27,7 @@
 
             case 'DELETE':
                 if ($urlList[2] == 'dish' && $urlList[4] == null) {
-                    echo 'api/basket/dish/{dishId}';
+                    deleteDishFromBasket($urlList[3]);
                 }
                 else {
                     responseNotFound();
