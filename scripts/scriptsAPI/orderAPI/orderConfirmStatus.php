@@ -1,10 +1,10 @@
 <?php
 
-    include_once 'scripts/responses.php';
+    include_once 'scripts/headers.php';
     include_once 'scripts/JWT.php';
     include_once 'scripts/connectDB.php';
 
-    function getListOrder() {
+    function confirmOrderStatus($idOrder) {
 
         $link = connectToDataBase();
 
@@ -22,21 +22,20 @@
 
             $currentUser = $resultUser["idUser"];
 
-            $resultOrders = $link->query("SELECT * FROM `order` WHERE idUser = '$currentUser'");
-        
-            $orderList = [];
-        
-            while ($row = mysqli_fetch_assoc($resultOrders)) {
-                $orderList[] = [
-                    "id" => $row["idOrder"],
-                    "orderTime" => str_replace(" ", "T", $row["orderTime"]) . ".000Z",
-                    "deliveryTime" => str_replace(" ", "T", $row["deliveryTime"]) . ".000Z",
-                    "status" => $row["status"],
-                    "price" => $row["price"]
+            $resultOrder = $link->query("SELECT idOrder FROM `order` WHERE idOrder = '$idOrder' AND idUser = '$currentUser'")->fetch_assoc();
+
+            if ($resultOrder != null) {
+                $result = $link->query("UPDATE `order` SET status = 'Delivered' WHERE idOrder = '$idOrder'");
+            }
+            else {
+                $response = [
+                    "status" => '404',
+                    "message" => 'Заказ не найден'
                 ];
+                echo json_encode($response);
+                exit;
             }
 
-            echo json_encode($orderList);
         }
         else {
             $response = [

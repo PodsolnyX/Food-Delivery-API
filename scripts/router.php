@@ -1,5 +1,5 @@
 <?php
-    include_once 'scripts/responses.php';
+    include_once 'scripts/headers.php';
 
     function getData($method) {
         $data = new stdClass();
@@ -37,11 +37,11 @@
                 route($method, $urlList, $requestData); 
             }
             else {
-                responseNotFound();
+                setHTTPStatus("404", "Method not found");;
             }
         }
         else {
-            responseNotFound();
+            setHTTPStatus("404", "Method not found");;
         }
     }
 

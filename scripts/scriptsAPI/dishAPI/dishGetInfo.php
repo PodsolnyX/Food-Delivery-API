@@ -1,8 +1,7 @@
 <?php
 
-    include_once 'scripts/responses.php';
+    include_once 'scripts/headers.php';
     include_once 'scripts/connectDB.php';
-
 
     function getDishInfo($idDish) {
 

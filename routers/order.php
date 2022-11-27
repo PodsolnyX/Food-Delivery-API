@@ -1,9 +1,10 @@
 <?php
 
-    include_once 'scripts/scriptsAPI/orderGet.php';
-    include_once 'scripts/scriptsAPI/orderGetList.php';
-    include_once 'scripts/scriptsAPI/orderCreate.php';
-    include_once 'scripts/scriptsAPI/orderConfirmStatus.php';
+    include_once 'scripts/headers.php';
+    include_once 'scripts/scriptsAPI/orderAPI/orderGet.php';
+    include_once 'scripts/scriptsAPI/orderAPI/orderGetList.php';
+    include_once 'scripts/scriptsAPI/orderAPI/orderCreate.php';
+    include_once 'scripts/scriptsAPI/orderAPI/orderConfirmStatus.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -16,7 +17,7 @@
                     confirmOrderStatus($urlList[2]);
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
             
@@ -28,12 +29,12 @@
                     getOrder($urlList[2]);
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
 
             default:
-                responseNotFound();
+                setHTTPStatus("404", "Method not found");
                 break;
         }
     }

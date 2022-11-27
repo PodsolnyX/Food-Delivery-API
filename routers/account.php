@@ -1,11 +1,11 @@
 <?php
 
-include_once 'scripts/responses.php';
-include_once 'scripts/scriptsAPI/userRegister.php';
-include_once 'scripts/scriptsAPI/userLogin.php';
-include_once 'scripts/scriptsAPI/userLogout.php';
-include_once 'scripts/scriptsAPI/userGetProfile.php';
-include_once 'scripts/scriptsAPI/userEditProfile.php';
+    include_once 'scripts/headers.php';
+    include_once 'scripts/scriptsAPI/userAPI/userRegister.php';
+    include_once 'scripts/scriptsAPI/userAPI/userLogin.php';
+    include_once 'scripts/scriptsAPI/userAPI/userLogout.php';
+    include_once 'scripts/scriptsAPI/userAPI/userGetProfile.php';
+    include_once 'scripts/scriptsAPI/userAPI/userEditProfile.php';
 
     function route($method, $urlList, $requestData) {
         if ($urlList[3] == null) {
@@ -25,7 +25,7 @@ include_once 'scripts/scriptsAPI/userEditProfile.php';
                             break;
                         
                         default:
-                            responseNotFound();
+                            setHTTPStatus("404", "Method not found");
                             break;
                     }
                     break;
@@ -35,7 +35,7 @@ include_once 'scripts/scriptsAPI/userEditProfile.php';
                         getProfileUser();
                     }
                     else {
-                        responseNotFound();
+                        setHTTPStatus("404", "Method not found");
                     }
                     break;
     
@@ -44,17 +44,17 @@ include_once 'scripts/scriptsAPI/userEditProfile.php';
                         editProfileUser($requestData);
                     }
                     else {
-                        responseNotFound();
+                        setHTTPStatus("404", "Method not found");
                     }
                     break;
     
                 default:
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                     break;
             }
         }
         else {
-            responseNotFound();
+            setHTTPStatus("404", "Method not found");
         }
     }
 

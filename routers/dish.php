@@ -1,11 +1,10 @@
 <?php
 
-    include_once 'scripts/responses.php';
-    include_once 'scripts/scriptsAPI/dishGetInfo.php';
-    include_once 'scripts/scriptsAPI/dishSetRating.php';
-    include_once 'scripts/scriptsAPI/dishCheckRating.php';
-    include_once 'scripts/scriptsAPI/dishGetList.php';
-
+    include_once 'scripts/headers.php';
+    include_once 'scripts/scriptsAPI/dishAPI/dishGetInfo.php';
+    include_once 'scripts/scriptsAPI/dishAPI/dishSetRating.php';
+    include_once 'scripts/scriptsAPI/dishAPI/dishCheckRating.php';
+    include_once 'scripts/scriptsAPI/dishAPI/dishGetList.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -15,7 +14,7 @@
                     setRatingDish($urlList[2], $requestData->body->ratingScore);
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
             
@@ -30,12 +29,12 @@
                     checkRatingDish($urlList[2]);
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
 
             default:
-                responseNotFound();
+                setHTTPStatus("404", "Method not found");
                 break;
         }
     }

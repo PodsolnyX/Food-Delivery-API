@@ -1,8 +1,9 @@
 <?php
 
-    include_once 'scripts/scriptsAPI/basketGetList.php';
-    include_once 'scripts/scriptsAPI/basketSetDish.php';
-    include_once 'scripts/scriptsAPI/basketDeleteDish.php';
+    include_once 'scripts/headers.php';
+    include_once 'scripts/scriptsAPI/basketAPI/basketGetList.php';
+    include_once 'scripts/scriptsAPI/basketAPI/basketSetDish.php';
+    include_once 'scripts/scriptsAPI/basketAPI/basketDeleteDish.php';
 
     function route($method, $urlList, $requestData) {
         include_once 'scripts/responses.php';
@@ -12,7 +13,7 @@
                     addDishToBasket($urlList[3]);
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
             
@@ -21,7 +22,7 @@
                     getBasketList();
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
 
@@ -30,12 +31,12 @@
                     deleteDishFromBasket($urlList[3]);
                 }
                 else {
-                    responseNotFound();
+                    setHTTPStatus("404", "Method not found");
                 }
                 break;
 
             default:
-                responseNotFound();
+                setHTTPStatus("404", "Method not found");
                 break;
         }
     }
