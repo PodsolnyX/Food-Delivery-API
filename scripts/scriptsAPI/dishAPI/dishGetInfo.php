@@ -1,22 +1,12 @@
 <?php
 
     include_once 'scripts/headers.php';
-    include_once 'scripts/connectDB.php';
+    include_once 'scripts/database.php';
 
     function getDishInfo($idDish) {
 
-        $link = connectToDataBase();
-
-        $dish = $link->query("SELECT * FROM dish WHERE idDish = '$idDish'")->fetch_assoc();
-
-        if ($dish == null) {
-            $response = [
-                "status" => '404',
-                "message" => 'Dish not found'
-            ];
-            echo json_encode($response);
-            exit;
-        }
+        $dish = query("SELECT * FROM dish WHERE idDish = '$idDish'");
+        if ($dish == null) setHTTPStatus("404", "Dish not found");
 
         $dishData = [
             "id" => $dish["idDish"],
@@ -30,7 +20,7 @@
         ];
 
         echo json_encode($dishData);
-        http_response_code(200);
+        setHTTPStatus("200");
     }
 
 ?>

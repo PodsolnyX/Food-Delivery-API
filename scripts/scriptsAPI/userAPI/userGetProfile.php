@@ -1,21 +1,20 @@
 <?php
 
     include_once 'scripts/headers.php';
+    include_once 'scripts/database.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
 
     function getProfileUser() {
-        $link = connectToDataBase();
 
-        $token = substr(getallheaders()['Authorization'], 7);
-
-        $result = $link->query("SELECT token FROM expired_token WHERE token = '$token'")->fetch_assoc();
+        $token = getTokenFromHeader();
         
-        if (!isExpired($token) && isValid($token) && $result == null) {
+        if (isTokenValid($token)) {
 
             $email = getPayload($token)["email"];
-            $user = $link->query("SELECT * FROM user WHERE email = '$email'")->fetch_assoc();
+            $user = query("SELECT * FROM user WHERE email = '$email'");
 
+            if (is_null($user)) setHTTPStatus("403");
+            
             $userData = [
                 "id" => $user["idUser"],
                 "fullName" => $user["fullName"],
@@ -27,11 +26,7 @@
             ];
 
             echo json_encode($userData);
-            http_response_code(200);
-        }
-        else {
-            responseUnauthorized();
-            exit;
+            setHTTPStatus("200");
         }
     }
 

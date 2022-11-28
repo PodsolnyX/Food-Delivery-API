@@ -1,23 +1,16 @@
 <?php
 
     include_once 'scripts/headers.php';
+    include_once 'scripts/database.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
 
     function editProfileUser($requestData) {
 
-        if(!checkValidEditUserData($requestData)) {
-            responseIncorrectData();
-            exit;
-        };
+        checkValidEditUserData($requestData);
 
-        $link = connectToDataBase();
+        $token = getTokenFromHeader();
 
-        $token = substr(getallheaders()['Authorization'], 7);
-
-        $result = $link->query("SELECT token FROM expired_token WHERE token = '$token'")->fetch_assoc();
-        
-        if (!isExpired($token) && isValid($token) && $result == null) {
+        if (isTokenValid($token)) {
 
             $email = getPayload($token)["email"];
             $fullName = $requestData->body->fullName;
@@ -26,13 +19,14 @@
             $gender = $requestData->body->gender;
             $phoneNumber = $requestData->body->phoneNumber;
 
-            $link->query("UPDATE user SET fullName = '$fullName', address = '$address', birthDate = '$birthDate', gender = '$gender', phoneNumber = '$phoneNumber' WHERE email = '$email'");
-            
-            http_response_code(200);
-        }
-        else {
-            responseUnauthorized();
-            exit;
+            query(
+                "UPDATE user 
+                SET fullName = '$fullName', address = '$address', birthDate = '$birthDate', 
+                gender = '$gender', phoneNumber = '$phoneNumber' 
+                WHERE email = '$email'"
+            );
+
+            setHTTPStatus("200");
         }
     }
 
@@ -41,23 +35,21 @@
         $nowTime = new DateTime();
 
         if (strlen($requestData->body->fullName) < 1) {
-            return false;
+            setHTTPStatus("400", "Empty fullname");
         }
         else if (strlen($requestData->body->address) < 1) {
-            return false;
+            setHTTPStatus("400", "Empty address");
         }
         else if (strtotime($requestData->body->birthDate) > $nowTime->getTimestamp() || 
         ($requestData->body->birthDate) < '1900-01-01T00:00:00.000Z') {
-            return false;
+            setHTTPStatus("400", "Incorrect birthdate");
         }
         else if ($requestData->body->gender != 'Male' && $requestData->body->gender != 'Female') {
-            return false;
+            setHTTPStatus("400", "Incorrect gender");
         }
         else if (!preg_match("/^\+7 \([0-9]{3}\) [0-9]{3}-[0-9]{2}-[0-9]{2}$/", $requestData->body->phoneNumber)) {
-            return false;
+            setHTTPStatus("400", "Incorrect phone number");
         }
-
-        return true;
     }
 
 ?>

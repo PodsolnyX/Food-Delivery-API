@@ -1,23 +1,11 @@
 <?php
 
     include_once 'scripts/headers.php';
-    include_once 'scripts/connectDB.php';
+    include_once 'scripts/database.php';
 
     function getDishList($search) {
 
-        $link = connectToDataBase();
-
         $explodeSearch = searchParse($search);
-
-        if ($explodeSearch["categories"] == null) {
-            $response = [
-                "status" => '400',
-                "message" => 'Категория не выбрана'
-            ];
-            echo json_encode($response);
-            exit;
-        };
-
         $categories = join("','", $explodeSearch["categories"]);
         $sorting = $explodeSearch["sorting"];
         $vegetarian = $explodeSearch["vegetarian"];
@@ -27,25 +15,18 @@
         $startId = ($pageSize*$pageNumber - 8);
         $endId = $pageSize*$pageNumber;
 
-        $result = $link->query("SELECT * FROM dish WHERE ((category IN ('$categories')) AND (vegetarian = $vegetarian)) ORDER BY $sorting LIMIT $startId, $endId");
-       
-        if ($result->fetch_assoc() == null) {
-            $response = [
-                "status" => '400',
-                "message" => 'Invalid value for attribute page'
-            ];
-            echo json_encode($response);
-            exit;
-        }
-        echo $categories;
+        $result = query("SELECT * FROM dish WHERE ((category IN ('$categories')) AND (vegetarian = $vegetarian)) ORDER BY $sorting LIMIT $startId, $endId", false);
 
-        $countDishes = $link->query("SELECT COUNT(*) AS countDishes FROM dish WHERE category IN ('$categories') AND vegetarian = $vegetarian")->fetch_assoc();
+        $countDishes = query("SELECT COUNT(*) AS countDishes FROM dish WHERE category IN ('$categories') AND vegetarian = $vegetarian");
 
         $countDishes = $countDishes["countDishes"];
 
+        if ($countDishes == 0) setHTTPStatus("400", "Dishes of this type were not found");
+        else if ($result == null && $countDishes != 0) setHTTPStatus("400", "Invalid value for attribute page");
+
         $pagination = [
             "size" => $pageSize,
-            "count" => $countDishes <= $pageSize ? 1 : ($countDishes % $pageSize == 0 ? intval($countDishes / $pageSize) : intval($countDishes / $pageSize) + 1),
+            "count" => $countDishes < $pageSize ? 1 : ($countDishes % $pageSize == 0 ? intval($countDishes / $pageSize) : intval($countDishes / $pageSize) + 1),
             "current" => $pageNumber 
         ];
 
@@ -68,8 +49,7 @@
         ];
 
         echo json_encode($dishList);
-
-        http_response_code(200);
+        setHTTPStatus("200");
     }
 
     function searchParse($search) {
@@ -82,18 +62,17 @@
         preg_match_all($categoriesRegex, $search, $matches, PREG_PATTERN_ORDER);
         $categories = $matches["category"];
 
+        if (empty($categories)) setHTTPStatus("400", "Category not selected");
+
         preg_match_all($pageRegex, $search, $matches, PREG_PATTERN_ORDER);
         $pageNumber = $matches["pageNumber"];
 
         preg_match_all($vegetarianRegex, $search, $matches, PREG_PATTERN_ORDER);
         $vegetarian = $matches["vegetarian"];
 
-        if ($vegetarian[0] == "true") {
-            $vegetarian[0] = "1";
-        }
-        else if ($vegetarian[0] == "false") {
-            $vegetarian[0] = "0";
-        }
+        if ($vegetarian[0] == "true") $vegetarian[0] = "1";
+        else if ($vegetarian[0] == "false") $vegetarian[0] = "0";
+        else if ($vegetarian[0] != "null") setHTTPStatus("400", "Invalid vegetarian");
 
         preg_match_all($sortingRegex, $search, $matches, PREG_PATTERN_ORDER);
         $sorting = $matches["sorting"];
@@ -121,12 +100,7 @@
                 $sorting[0] = '';
                 break;
             default:
-                $response = [
-                    "status" => '400',
-                    "message" => 'Invalid sorting'
-                ];
-                echo json_encode($response);
-                exit;
+                setHTTPStatus("400", "Invalid sorting");
                 break;
         }
 

@@ -1,49 +1,36 @@
 <?php
 
     include_once 'scripts/headers.php';
+    include_once 'scripts/database.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
 
     function loginUser($requestData) {
 
-        if(!checkValidLoginData($requestData)) {
-            responseIncorrectData();
-            exit;
-        }
-        
-        $link = connectToDataBase();
+        checkValidLoginData($requestData);
 
         $email = $requestData->body->email;
 
-        $user = $link->query("SELECT email, password FROM user WHERE email = '$email'")->fetch_assoc();
+        $user = query("SELECT email, password FROM user WHERE email = '$email'");
 
-        if (is_null($user)) {
-            responseIncorrectPasswordOrLogin();
-        }
+        if (is_null($user)) setHTTPStatus("400", "Incorrect password or login");
+        
         else {
             if (hash("sha1", $requestData->body->password) == $user["password"]) {
-                $response = [
-                    "token" => generateToken($email)
-                ];
-                echo json_encode($response);
-                http_response_code(200);
+                echo json_encode(["token" => generateToken($email)]);
+                setHTTPStatus("200");
             }
-            else {
-                responseIncorrectPasswordOrLogin();
-            }
+            else setHTTPStatus("400", "Incorrect password or login");
         }
     }
 
     function checkValidLoginData($requestData) {
 
         if (strlen($requestData->body->password) < 6) {
-            return false;
+            setHTTPStatus("400", "Password length is less than 6");
         }
         else if (!filter_var($requestData->body->email, FILTER_VALIDATE_EMAIL)) {
-            return false;
+            setHTTPStatus("400", "Inccorect login");
         }
-
-        return true;
     }
 
 ?>

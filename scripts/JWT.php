@@ -1,4 +1,8 @@
 <?php
+
+    include_once 'scripts/headers.php';
+    include_once 'scripts/database.php';
+
     function generateToken($email) {
         $header = ['alg' => 'HS256', 'typ' => 'JWT'];
         $payload = ['email' => $email];
@@ -40,5 +44,26 @@
     function isValid($token) {
         $tokenList = explode('.', $token);
         return $tokenList[0] == 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+    }
+
+    function getTokenFromHeader() {
+        $token = substr(getallheaders()['Authorization'], 7);
+
+        if ($token == null) setHTTPStatus("400", "Token is null");
+
+        return $token;
+    }
+
+    function isTokenValid($token) {
+
+        $result = query("SELECT token FROM expired_token WHERE token = '$token'");
+
+        if (!isExpired($token) && isValid($token) && $result == null) {
+            return true;
+        }
+        else if (!isValid($token)) setHTTPStatus("403");
+        else setHTTPStatus("401");
+
+        return false;
     }
 ?>

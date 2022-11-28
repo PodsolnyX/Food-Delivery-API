@@ -2,32 +2,30 @@
 
     include_once 'scripts/headers.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
+    include_once 'scripts/database.php';
 
     function getOrder($idOrder) {
 
-        $link = connectToDataBase();
-
-        $token = substr(getallheaders()['Authorization'], 7);
-
-        $result = $link->query("SELECT token FROM expired_token WHERE token = '$token'")->fetch_assoc();
+        $token = getTokenFromHeader();
         
-        if (!isExpired($token) && isValid($token) && $result == null) {
+        if (isTokenValid($token)) {
 
             $email = getPayload($token)["email"];
 
-            $resultUser = $link->query("SELECT user.idUser FROM user WHERE email = '$email'")->fetch_assoc();
+            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
 
             $currentUser = $resultUser["idUser"];
 
-            $resultOrder = $link->query("SELECT * FROM `order` WHERE idOrder = '$idOrder' AND idUser = '$currentUser'")->fetch_assoc();
+            $resultOrder = query("SELECT * FROM `order` WHERE idOrder = '$idOrder' AND idUser = '$currentUser'");
 
             if ($resultOrder != null) {
 
-                $resultBasket = $link->query(
+                $resultBasket = query(
                     "SELECT dish.idDish, name, price, amount, image FROM dish_basket
                     INNER JOIN dish on dish_basket.idDish = dish.idDish
-                    WHERE idUser = '$currentUser' AND idOrder = '$idOrder'");
+                    WHERE idUser = '$currentUser' AND idOrder = '$idOrder'",
+                    false
+                );
         
                 $dishes = [];
         
@@ -53,24 +51,9 @@
                 ];
 
                 echo json_encode($order);
-
+                setHTTPStatus("200");
             }
-            else {
-                $response = [
-                    "status" => '404',
-                    "message" => 'Заказ не найден'
-                ];
-                echo json_encode($response);
-                exit;
-            }
-        }
-        else {
-            $response = [
-                "status" => '401',
-                "message" => 'Unauthorized'
-            ];
-            echo json_encode($response);
-            exit;
+            else setHTTPStatus("404", "Order not found");
         }
     }
 

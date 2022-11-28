@@ -2,94 +2,47 @@
 
     include_once 'scripts/headers.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
+    include_once 'scripts/database.php';
 
     function setRatingDish($idDish, $ratingScore) {
 
-        if ($ratingScore < 0 || $ratingScore > 10) {
-            $response = [
-                "status" => '401',
-                "message" => 'Incorrect rating score'
-            ];
-            echo json_encode($response);
-            exit;
-        }
+        if ($ratingScore < 0 || $ratingScore > 10) setHTTPStatus("400", "Incorrect rating score");
 
-        $link = connectToDataBase();
+        $dish = query("SELECT * FROM dish WHERE idDish = '$idDish'");
+        if ($dish == null) setHTTPStatus("404", "Dish not found");
 
-        $dish = $link->query("SELECT * FROM dish WHERE idDish = '$idDish'")->fetch_assoc();
-
-        if ($dish == null) {
-            $response = [
-                "status" => '404',
-                "message" => 'Dish not found'
-            ];
-            echo json_encode($response);
-            exit;
-        }
-
-        $token = substr(getallheaders()['Authorization'], 7);
-
-        $result = $link->query("SELECT token FROM expired_token WHERE token = '$token'")->fetch_assoc();
+        $token = getTokenFromHeader();
         
-        if (!isExpired($token) && isValid($token) && $result == null) {
+        if (isTokenValid($token)) {
 
             $email = getPayload($token)["email"];
 
-            $resultUser = $link->query(
+            $resultUser = query(
             "SELECT user.idUser FROM user 
             INNER JOIN dish_basket on user.idUser = dish_basket.idUser
-            WHERE email = '$email' AND idDish = '$idDish' AND idOrder IS NOT NULL")->fetch_assoc();
+            WHERE email = '$email' AND idDish = '$idDish' AND idOrder IS NOT NULL");
 
             $idUser = $resultUser["idUser"];
 
             if ($idUser != null) {
 
-                $resultRating = $link->query(
-                "SELECT rating.rating FROM rating 
-                WHERE idUser = '$idUser' AND idDish = '$idDish'")->fetch_assoc();
+                $resultRating = query("SELECT rating.rating FROM rating WHERE idUser = '$idUser' AND idDish = '$idDish'");
 
                 $currentRating = $resultRating["rating"];
 
-                if ($currentRating == null) {
-                    $result = $link->query(
-                        "INSERT INTO rating(idUser, idDish, rating) 
-                        VALUES ('$idUser', '$idDish', '$ratingScore')");
-                    echo json_encode($link->error);
-                    http_response_code(200);
-                }
-                else {
-                    $result = $link->query(
-                        "UPDATE rating SET rating = '$ratingScore' 
-                        WHERE idUser = '$idUser' AND idDish = '$idDish'");
-                    echo json_encode($link->error);
-                    http_response_code(200);
-                }
+                if ($currentRating == null) 
+                    query("INSERT INTO rating(idUser, idDish, rating) VALUES ('$idUser', '$idDish', '$ratingScore')");
+                
+                else 
+                    query("UPDATE rating SET rating = '$ratingScore' WHERE idUser = '$idUser' AND idDish = '$idDish'");
 
-                $result = $link->query("SELECT AVG(rating) AS totalRating FROM rating WHERE idDish = '$idDish' GROUP BY idDish")->fetch_assoc();
-                echo json_encode($link->error);
+                $result = query("SELECT AVG(rating) AS totalRating FROM rating WHERE idDish = '$idDish' GROUP BY idDish");
                 $totalRating = $result['totalRating'];
-                $result = $link->query("UPDATE dish SET rating = $totalRating WHERE idDish = '$idDish'");
-                echo json_encode($link->error);
-
+                query("UPDATE dish SET rating = $totalRating WHERE idDish = '$idDish'");
+                
+                setHTTPStatus("200");
             }
-            else {
-                $response = [
-                    "status" => '404',
-                    "message" => 'Пользователь не покупал этот товар'
-                ];
-                echo json_encode($response);
-                exit;
-            }
-
-        }
-        else {
-            $response = [
-                "status" => '401',
-                "message" => 'Unauthorized'
-            ];
-            echo json_encode($response);
-            exit;
+            else setHTTPStatus("404", "The user did not buy this dish");
         }
     }
 

@@ -37,11 +37,11 @@
                 route($method, $urlList, $requestData); 
             }
             else {
-                setHTTPStatus("404", "Method not found");;
+                setHTTPStatus("404", "Method not found");
             }
         }
         else {
-            setHTTPStatus("404", "Method not found");;
+            setHTTPStatus("404", "Method not found");
         }
     }
 

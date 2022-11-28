@@ -2,53 +2,30 @@
 
     include_once 'scripts/headers.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
+    include_once 'scripts/database.php';
 
     function checkRatingDish($idDish) {
 
-        $link = connectToDataBase();
-
-        $dish = $link->query("SELECT * FROM dish WHERE idDish = '$idDish'")->fetch_assoc();
-
-        if ($dish == null) {
-            $response = [
-                "status" => '404',
-                "message" => 'Dish not found'
-            ];
-            echo json_encode($response);
-            exit;
-        }
-
-        $token = substr(getallheaders()['Authorization'], 7);
-
-        $result = $link->query("SELECT token FROM expired_token WHERE token = '$token'")->fetch_assoc();
+        $dish = query("SELECT * FROM dish WHERE idDish = '$idDish'");
+        if ($dish == null) setHTTPStatus("404", "Dish not found");
         
-        if (!isExpired($token) && isValid($token) && $result == null) {
+        $token = getTokenFromHeader();
+        
+        if (isTokenValid($token)) {
 
             $email = getPayload($token)["email"];
 
-            $resultUser = $link->query(
+            $resultUser = query(
             "SELECT user.idUser FROM user 
             INNER JOIN dish_basket on user.idUser = dish_basket.idUser
-            WHERE email = '$email' AND idDish = '$idDish'")->fetch_assoc();
+            WHERE email = '$email' AND idDish = '$idDish'");
 
             $idUser = $resultUser["idUser"];
 
-            if ($idUser != null) {
-                echo json_encode(true);
-            }
-            else {
-                echo json_encode(false);
-            }
+            if ($idUser != null) echo json_encode(true);
+            else echo json_encode(false);
+            setHTTPStatus("200");
 
-        }
-        else {
-            $response = [
-                "status" => '401',
-                "message" => 'Unauthorized'
-            ];
-            echo json_encode($response);
-            exit;
         }
     }
 

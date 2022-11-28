@@ -2,27 +2,21 @@
 
     include_once 'scripts/headers.php';
     include_once 'scripts/JWT.php';
-    include_once 'scripts/connectDB.php';
+    include_once 'scripts/database.php';
 
     function getListOrder() {
 
-        $link = connectToDataBase();
-
-        $token = substr(getallheaders()['Authorization'], 7);
-
-        $result = $link->query("SELECT token FROM expired_token WHERE token = '$token'")->fetch_assoc();
+        $token = getTokenFromHeader();
         
-        if (!isExpired($token) && isValid($token) && $result == null) {
+        if (isTokenValid($token)) {
 
             $email = getPayload($token)["email"];
 
-            $resultUser = $link->query(
-                "SELECT user.idUser FROM user 
-                WHERE email = '$email'")->fetch_assoc();
+            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
 
             $currentUser = $resultUser["idUser"];
 
-            $resultOrders = $link->query("SELECT * FROM `order` WHERE idUser = '$currentUser'");
+            $resultOrders = query("SELECT * FROM `order` WHERE idUser = '$currentUser'", false);
         
             $orderList = [];
         
@@ -37,14 +31,7 @@
             }
 
             echo json_encode($orderList);
-        }
-        else {
-            $response = [
-                "status" => '401',
-                "message" => 'Unauthorized'
-            ];
-            echo json_encode($response);
-            exit;
+            setHTTPStatus("200");
         }
     }
 
