@@ -10,20 +10,18 @@
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
+            $idUser = findUserIDByToken($token);
 
-            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
-
-            $currentUser = $resultUser["idUser"];
-
-            $resultOrder = query("SELECT * FROM `order` WHERE idOrder = '$idOrder' AND idUser = '$currentUser'");
+            $resultOrder = query("SELECT * FROM `order` WHERE idOrder = '$idOrder'");
 
             if ($resultOrder != null) {
+
+                if ($resultOrder["idOrder"] != $idUser) setHTTPStatus("403");
 
                 $resultBasket = query(
                     "SELECT dish.idDish, name, price, amount, image FROM dish_basket
                     INNER JOIN dish on dish_basket.idDish = dish.idDish
-                    WHERE idUser = '$currentUser' AND idOrder = '$idOrder'",
+                    WHERE idUser = '$idUser' AND idOrder = '$idOrder'",
                     false
                 );
         

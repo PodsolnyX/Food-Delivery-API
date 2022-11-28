@@ -10,15 +10,12 @@
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
-
-            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
-            $currentUser = $resultUser["idUser"];
+            $idUser = findUserIDByToken($token);
 
             $resultBasket = query(
             "SELECT dish.idDish, name, price, amount, image FROM dish_basket
             INNER JOIN dish on dish_basket.idDish = dish.idDish
-            WHERE idUser = '$currentUser' AND idOrder IS NULL", false);
+            WHERE idUser = '$idUser' AND idOrder IS NULL", false);
 
             $basket = [];
 

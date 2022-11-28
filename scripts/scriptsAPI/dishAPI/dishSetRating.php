@@ -8,37 +8,35 @@
 
         if ($ratingScore < 0 || $ratingScore > 10) setHTTPStatus("400", "Incorrect rating score");
 
-        $dish = query("SELECT * FROM dish WHERE idDish = '$idDish'");
-        if ($dish == null) setHTTPStatus("404", "Dish not found");
+        checkDishExists($idDish);
 
         $token = getTokenFromHeader();
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
+            $idUser = findUserIDByToken($token);
+            $result = query("SELECT id FROM dish_basket WHERE idUser = '$idUser' AND idDish = '$idDish' AND idOrder IS NOT NULL");
 
-            $resultUser = query(
-            "SELECT user.idUser FROM user 
-            INNER JOIN dish_basket on user.idUser = dish_basket.idUser
-            WHERE email = '$email' AND idDish = '$idDish' AND idOrder IS NOT NULL");
+            if ($result != null) {
 
-            $idUser = $resultUser["idUser"];
+                $rating = query("SELECT rating FROM rating WHERE idUser = '$idUser' AND idDish = '$idDish'")["rating"];
 
-            if ($idUser != null) {
-
-                $resultRating = query("SELECT rating.rating FROM rating WHERE idUser = '$idUser' AND idDish = '$idDish'");
-
-                $currentRating = $resultRating["rating"];
-
-                if ($currentRating == null) 
-                    query("INSERT INTO rating(idUser, idDish, rating) VALUES ('$idUser', '$idDish', '$ratingScore')");
+                if ($rating == null) 
+                    query(
+                        "INSERT INTO rating(idUser, idDish, rating) 
+                        VALUES ('$idUser', '$idDish', '$ratingScore')", 
+                        false
+                    );
                 
                 else 
-                    query("UPDATE rating SET rating = '$ratingScore' WHERE idUser = '$idUser' AND idDish = '$idDish'");
+                    query("UPDATE rating SET rating = '$ratingScore' WHERE idUser = '$idUser' AND idDish = '$idDish'", false);
 
-                $result = query("SELECT AVG(rating) AS totalRating FROM rating WHERE idDish = '$idDish' GROUP BY idDish");
-                $totalRating = $result['totalRating'];
-                query("UPDATE dish SET rating = $totalRating WHERE idDish = '$idDish'");
+                $totalRating = query(
+                    "SELECT AVG(rating) AS totalRating FROM rating 
+                    WHERE idDish = '$idDish' GROUP BY idDish"
+                    )['totalRating'];
+
+                query("UPDATE dish SET rating = $totalRating WHERE idDish = '$idDish'", false);
                 
                 setHTTPStatus("200");
             }

@@ -5,8 +5,9 @@
 
     function getDishInfo($idDish) {
 
+        checkDishExists($idDish);
+
         $dish = query("SELECT * FROM dish WHERE idDish = '$idDish'");
-        if ($dish == null) setHTTPStatus("404", "Dish not found");
 
         $dishData = [
             "id" => $dish["idDish"],

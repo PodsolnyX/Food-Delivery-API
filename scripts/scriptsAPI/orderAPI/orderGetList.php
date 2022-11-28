@@ -10,13 +10,9 @@
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
+            $idUser = findUserIDByToken($token);
 
-            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
-
-            $currentUser = $resultUser["idUser"];
-
-            $resultOrders = query("SELECT * FROM `order` WHERE idUser = '$currentUser'", false);
+            $resultOrders = query("SELECT * FROM `order` WHERE idUser = '$idUser'", false);
         
             $orderList = [];
         

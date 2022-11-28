@@ -24,7 +24,8 @@
 
             query(
                 "INSERT INTO user(idUser, fullName, birthDate, gender, address, email, phoneNumber, password) 
-                VALUES ('$idUser', '$fullName', '$birthDate', '$gender', '$address', '$email', '$phoneNumber', '$password')"
+                VALUES ('$idUser', '$fullName', '$birthDate', '$gender', '$address', '$email', '$phoneNumber', '$password')", 
+                false
             );
 
             echo json_encode(["token" => generateToken($email)]);

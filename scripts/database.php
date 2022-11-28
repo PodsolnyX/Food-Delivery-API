@@ -31,4 +31,23 @@
         return $result;
     }
 
+    function findUserIDByToken($token) {
+
+        $email = getPayload($token)["email"];
+
+        $result = query("SELECT idUser FROM user WHERE email = '$email'");
+
+        if (is_null($result)) setHTTPStatus("403", "User not found");
+        
+        $idUser = $result["idUser"];
+
+        return $idUser;
+    }
+
+    function checkDishExists($idDish) {
+        $dish = query("SELECT idDish FROM dish WHERE idDish = '$idDish'");
+        if ($dish == null) setHTTPStatus("404", "Dish not found");
+        return true;
+    }
+
 ?>

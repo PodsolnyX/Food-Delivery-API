@@ -7,7 +7,6 @@
     include_once 'scripts/scriptsAPI/orderAPI/orderConfirmStatus.php';
 
     function route($method, $urlList, $requestData) {
-        include_once 'scripts/responses.php';
         switch ($method) {
             case 'POST':
                 if ($urlList[2] == null) {

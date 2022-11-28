@@ -10,10 +10,9 @@
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
-            $user = query("SELECT * FROM user WHERE email = '$email'");
+            $idUser = findUserIDByToken($token);
 
-            if (is_null($user)) setHTTPStatus("403");
+            $user = query("SELECT * FROM user WHERE idUser = '$idUser'");
             
             $userData = [
                 "id" => $user["idUser"],

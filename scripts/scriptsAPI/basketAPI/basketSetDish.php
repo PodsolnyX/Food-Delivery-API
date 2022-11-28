@@ -6,30 +6,28 @@
 
     function addDishToBasket($idDish) {
 
-        $dish = query("SELECT * FROM dish WHERE idDish = '$idDish'");
-        if ($dish == null) setHTTPStatus("404", "Dish not found");
+        checkDishExists($idDish);
 
         $token = getTokenFromHeader();
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
-            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
-            $currentUser = $resultUser["idUser"];
+            $idUser = findUserIDByToken($token);
 
             $resultBasketDish = query(
             "SELECT id, amount FROM dish_basket
-            WHERE idUser = '$currentUser' AND idDish = '$idDish' AND idOrder IS NULL");
+            WHERE idUser = '$idUser' AND idDish = '$idDish' AND idOrder IS NULL"
+            );
 
             $idBasketDish = $resultBasketDish["id"];
 
             if ($idBasketDish == null) {
-                query("INSERT INTO dish_basket(idUser, idDish, amount) VALUES ('$currentUser', '$idDish', '1')");
+                query("INSERT INTO dish_basket(idUser, idDish, amount) VALUES ('$idUser', '$idDish', '1')", false);
                 setHTTPStatus("200");                  
             }
             else {
                 $amountBasketDish = $resultBasketDish["amount"] + 1;
-                query("UPDATE dish_basket SET amount = '$amountBasketDish' WHERE id = '$idBasketDish'");
+                query("UPDATE dish_basket SET amount = '$amountBasketDish' WHERE id = '$idBasketDish'", false);
                 setHTTPStatus("200");
             }
         }

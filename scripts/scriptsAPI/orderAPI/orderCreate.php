@@ -10,10 +10,7 @@
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
-
-            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
-            $currentUser = $resultUser["idUser"];
+            $idUser = findUserIDByToken($token);
 
             $idOder = uniqid();
             $orderPrice = 0;
@@ -27,7 +24,7 @@
             $resultBasket = query(
                 "SELECT price, amount FROM dish_basket
                 INNER JOIN dish on dish_basket.idDish = dish.idDish
-                WHERE idUser = '$currentUser' AND idOrder IS NULL",
+                WHERE idUser = '$idUser' AND idOrder IS NULL",
                 false
             );
     
@@ -39,10 +36,11 @@
 
             query(
                 "INSERT `order`(idOrder, idUser, deliveryTime, orderTime, status, price, address) 
-                VALUES ('$idOder', '$currentUser', '$deliveryTime', '$orderTime', 'InProcess', '$orderPrice', '$address')"
+                VALUES ('$idOder', '$idUser', '$deliveryTime', '$orderTime', 'InProcess', '$orderPrice', '$address')", 
+                false
             );
 
-            query("UPDATE dish_basket SET idOrder = '$idOder' WHERE idOrder IS NULL");
+            query("UPDATE dish_basket SET idOrder = '$idOder' WHERE idOrder IS NULL", false);
 
             setHTTPStatus("200");
         }

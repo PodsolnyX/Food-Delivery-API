@@ -13,7 +13,6 @@
         $user = query("SELECT email, password FROM user WHERE email = '$email'");
 
         if (is_null($user)) setHTTPStatus("400", "Incorrect password or login");
-        
         else {
             if (hash("sha1", $requestData->body->password) == $user["password"]) {
                 echo json_encode(["token" => generateToken($email)]);

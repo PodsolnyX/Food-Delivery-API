@@ -10,19 +10,15 @@
         
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
+            $idUser = findUserIDByToken($token);
 
-            $resultUser = query("SELECT user.idUser FROM user WHERE email = '$email'");
+            $order = query("SELECT idOrder, idUser FROM `order` WHERE idOrder = '$idOrder'");
 
-            $currentUser = $resultUser["idUser"];
-
-            $resultOrder = query("SELECT idOrder, idUser FROM `order` WHERE idOrder = '$idOrder'");
-
-            if ($resultOrder != null && $resultOrder["idUser"] == $currentUser) {
-                query("UPDATE `order` SET status = 'Delivered' WHERE idOrder = '$idOrder'");
+            if ($order != null && $order["idUser"] == $idUser) {
+                query("UPDATE `order` SET status = 'Delivered' WHERE idOrder = '$idOrder'", false);
                 setHTTPStatus("200");
             }
-            else if ($resultOrder != null && $resultOrder["idUser"] != $currentUser) setHTTPStatus("403");
+            else if ($order != null && $order["idUser"] != $idUser) setHTTPStatus("403");
             else setHTTPStatus("404", "Order not found");
         }
     }

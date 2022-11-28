@@ -12,7 +12,8 @@
 
         if (isTokenValid($token)) {
 
-            $email = getPayload($token)["email"];
+            $idUser = findUserIDByToken($token);
+
             $fullName = $requestData->body->fullName;
             $address = $requestData->body->address;
             $birthDate = substr($requestData->body->birthDate, 0, 10);
@@ -21,9 +22,9 @@
 
             query(
                 "UPDATE user 
-                SET fullName = '$fullName', address = '$address', birthDate = '$birthDate', 
-                gender = '$gender', phoneNumber = '$phoneNumber' 
-                WHERE email = '$email'"
+                SET fullName = '$fullName', address = '$address', birthDate = '$birthDate', gender = '$gender', phoneNumber = '$phoneNumber' 
+                WHERE idUser = '$idUser'", 
+                false
             );
 
             setHTTPStatus("200");
