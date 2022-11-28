@@ -47,17 +47,16 @@
         else if (strlen($requestData->body->fullName) < 1) {
             setHTTPStatus("400", "Empty fullname");
         }
-        else if (strlen($requestData->body->address) < 1) {
-            setHTTPStatus("400", "Empty address");
-        }
-        else if (strtotime($requestData->body->birthDate) > $nowTime->getTimestamp() || 
-        ($requestData->body->birthDate) < '1900-01-01T00:00:00.000Z') {
+        else if ($requestData->body->birthDate != "" && 
+        (strtotime($requestData->body->birthDate) > $nowTime->getTimestamp() || 
+        ($requestData->body->birthDate) < '1900-01-01T00:00:00.000Z')) {
             setHTTPStatus("400", "Incorrect birthdate");
         }
         else if ($requestData->body->gender != 'Male' && $requestData->body->gender != 'Female') {
             setHTTPStatus("400", "Incorrect gender");
         }
-        else if (!preg_match("/^\+7 \([0-9]{3}\) [0-9]{3}-[0-9]{2}-[0-9]{2}$/", $requestData->body->phoneNumber)) {
+        else if ($requestData->body->phoneNumber != "" && 
+        !preg_match("/^\+7 \([0-9]{3}\) [0-9]{3}-[0-9]{2}-[0-9]{2}$/", $requestData->body->phoneNumber)) {
             setHTTPStatus("400", "Incorrect phone number");
         }
     }

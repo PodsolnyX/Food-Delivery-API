@@ -35,7 +35,6 @@
         ];
 
         while ($dish = mysqli_fetch_assoc($result)) {
-            echo "1";
             $dishes[] = [
                 "id" => $dish["idDish"],
                 "name" => $dish["name"],
@@ -66,14 +65,13 @@
         $vegetarianRegex = "/[\?&]vegetarian=(?<vegetarian>\w*)/m";
         $sortingRegex = "/[\?&]sorting=(?<sorting>\w*)/m";
 
-        $constCategories = ['Pizza', 'Soup', 'Wok', 'Drink', 'Dessert'];
+        $constCategories = ["Pizza", "Soup", "Wok", "Drink", "Dessert"];
 
         preg_match_all($categoriesRegex, $search, $matches, PREG_PATTERN_ORDER);
         $categories = $matches["category"];
 
-        if (empty($categories)) setHTTPStatus("400", "Category not selected");
-
-        if (!(count(array_intersect($categories, $constCategories)) == count($categories))) setHTTPStatus("400", "Invalid category");
+        if (empty($categories)) $categories = $constCategories;
+        else if (!(count(array_intersect($categories, $constCategories)) == count($categories))) setHTTPStatus("400", "Invalid category");
 
         preg_match_all($pageRegex, $search, $matches, PREG_PATTERN_ORDER);
         $pageNumber = $matches["pageNumber"];
@@ -86,7 +84,7 @@
         $vegetarian = $matches["vegetarian"];
 
         if ($vegetarian[0] == "true") $vegetarian[0] = "1";
-        else if ($vegetarian[0] == "false") $vegetarian[0] = "0";
+        else if ($vegetarian[0] == "false") $vegetarian[0] = "0 OR 1";
         else if ($vegetarian[0] != null) setHTTPStatus("400", "Invalid vegetarian");
 
         preg_match_all($sortingRegex, $search, $matches, PREG_PATTERN_ORDER);
@@ -112,7 +110,7 @@
                 $sorting[0] = 'rating DESC';
                 break;
             case null:
-                $sorting[0] = '';
+                $sorting[0] = 'name';
                 break;
             default:
                 setHTTPStatus("400", "Invalid sorting");
