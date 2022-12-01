@@ -1,8 +1,8 @@
 <?php
 
-    include_once 'scripts/headers.php';
-    include_once 'scripts/database.php';
-    include_once 'scripts/JWT.php';
+    include_once 'scripts/helpers/headers.php';
+    include_once 'scripts/helpers/database.php';
+    include_once 'scripts/helpers/JWT.php';
 
     function editProfileUser($requestData) {
 
@@ -22,7 +22,8 @@
 
             query(
                 "UPDATE user 
-                SET fullName = '$fullName', address = '$address', birthDate = '$birthDate', gender = '$gender', phoneNumber = '$phoneNumber' 
+                SET fullName = '$fullName', address = '$address', birthDate = '$birthDate', 
+                gender = '$gender', phoneNumber = '$phoneNumber' 
                 WHERE idUser = '$idUser'", 
                 false
             );

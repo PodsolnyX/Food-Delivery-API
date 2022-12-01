@@ -1,7 +1,7 @@
 <?php
 
-    include_once 'scripts/headers.php';
-    include_once 'scripts/database.php';
+    include_once 'scripts/helpers/headers.php';
+    include_once 'scripts/helpers/database.php';
 
     function getDishList($search) {
 
@@ -30,7 +30,11 @@
         
         $pagination = [
             "size" => $pageSize,
-            "count" => $countDishes < $pageSize ? 1 : ($countDishes % $pageSize == 0 ? intval($countDishes / $pageSize) : intval($countDishes / $pageSize) + 1),
+            "count" => $countDishes < $pageSize ? 1 
+            :
+            ($countDishes % $pageSize == 0 ? intval($countDishes / $pageSize) 
+            :
+            intval($countDishes / $pageSize) + 1),
             "current" => $pageNumber 
         ];
 
@@ -70,15 +74,18 @@
         preg_match_all($categoriesRegex, $search, $matches, PREG_PATTERN_ORDER);
         $categories = $matches["category"];
 
-        if (empty($categories)) $categories = $constCategories;
-        else if (!(count(array_intersect($categories, $constCategories)) == count($categories))) setHTTPStatus("400", "Invalid category");
+        if (empty($categories)) 
+            $categories = $constCategories;
+        else if (!(count(array_intersect($categories, $constCategories)) == count($categories))) 
+            setHTTPStatus("400", "Invalid category");
 
         preg_match_all($pageRegex, $search, $matches, PREG_PATTERN_ORDER);
         $pageNumber = $matches["pageNumber"];
 
         $num = $pageNumber[0];
 
-        if ($num != null && (($num != intval($num)) || ($num <= 0))) setHTTPStatus("400", "Invalid page number");
+        if ($num != null && (($num != intval($num)) || ($num <= 0))) 
+            setHTTPStatus("400", "Invalid page number");
 
         preg_match_all($vegetarianRegex, $search, $matches, PREG_PATTERN_ORDER);
         $vegetarian = $matches["vegetarian"];

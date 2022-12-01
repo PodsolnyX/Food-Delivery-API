@@ -1,8 +1,8 @@
 <?php
 
-    include_once 'scripts/headers.php';
-    include_once 'scripts/database.php';
-    include_once 'scripts/JWT.php';
+    include_once 'scripts/helpers/headers.php';
+    include_once 'scripts/helpers/database.php';
+    include_once 'scripts/helpers/JWT.php';
 
     function registerUser($requestData) {
 
@@ -24,14 +24,15 @@
 
             query(
                 "INSERT INTO user(idUser, fullName, birthDate, gender, address, email, phoneNumber, password) 
-                VALUES ('$idUser', '$fullName', '$birthDate', '$gender', '$address', '$email', '$phoneNumber', '$password')", 
+                VALUES ('$idUser', '$fullName', '$birthDate', '$gender', '$address', 
+                '$email', '$phoneNumber', '$password')", 
                 false
             );
 
             echo json_encode(["token" => generateToken($email)]);
             setHTTPStatus("200");
         }
-        else setHTTPStatus("400", "Account already exists");
+        else setHTTPStatus("409", "Account already exists");
     }
 
     function checkValidRegisterData($requestData) {

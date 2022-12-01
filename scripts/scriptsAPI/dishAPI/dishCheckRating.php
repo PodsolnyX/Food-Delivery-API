@@ -1,8 +1,8 @@
 <?php
 
-    include_once 'scripts/headers.php';
-    include_once 'scripts/JWT.php';
-    include_once 'scripts/database.php';
+    include_once 'scripts/helpers/headers.php';
+    include_once 'scripts/helpers/JWT.php';
+    include_once 'scripts/helpers/database.php';
 
     function checkRatingDish($idDish) {
 

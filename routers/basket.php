@@ -1,6 +1,6 @@
 <?php
 
-    include_once 'scripts/headers.php';
+    include_once 'scripts/helpers/headers.php';
     include_once 'scripts/scriptsAPI/basketAPI/basketGetList.php';
     include_once 'scripts/scriptsAPI/basketAPI/basketSetDish.php';
     include_once 'scripts/scriptsAPI/basketAPI/basketDeleteDish.php';

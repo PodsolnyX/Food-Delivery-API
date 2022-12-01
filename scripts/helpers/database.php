@@ -1,6 +1,6 @@
 <?php
 
-    include_once 'scripts/headers.php';
+    include_once 'scripts/helpers/headers.php';
 
     function connectToDataBase() {
         $link = mysqli_connect("127.0.0.1", "backend", "password", "deliveryFood");

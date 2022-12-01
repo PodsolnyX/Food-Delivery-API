@@ -1,7 +1,7 @@
 <?php
 
-    include_once 'scripts/headers.php';
-    include_once 'scripts/database.php';
+    include_once 'scripts/helpers/headers.php';
+    include_once 'scripts/helpers/database.php';
 
     function generateToken($email) {
         $header = ['alg' => 'HS256', 'typ' => 'JWT'];
@@ -47,11 +47,13 @@
     }
 
     function getTokenFromHeader() {
-        $token = substr(getallheaders()['Authorization'], 7);
+        $authorization = explode(" ", getallheaders()['Authorization']);
 
-        if ($token == null) setHTTPStatus("400", "Token is null");
+        if ($authorization[0] != "Bearer") setHTTPStatus("400", "Incorrect token type");
 
-        return $token;
+        if ($authorization[1] == null) setHTTPStatus("400", "Token is null");
+
+        return $authorization[1];
     }
 
     function isTokenValid($token) {

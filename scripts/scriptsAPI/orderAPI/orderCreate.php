@@ -1,8 +1,8 @@
 <?php
 
-    include_once 'scripts/headers.php';
-    include_once 'scripts/JWT.php';
-    include_once 'scripts/database.php';
+    include_once 'scripts/helpers/headers.php';
+    include_once 'scripts/helpers/JWT.php';
+    include_once 'scripts/helpers/database.php';
 
     function createOrder($requestData) {
 
@@ -11,15 +11,17 @@
         if (isTokenValid($token)) {
 
             $idUser = findUserIDByToken($token);
+            $orderTime = new DateTime();
+
+            if (strtotime($requestData->body->deliveryTime) < ($orderTime->getTimestamp() + 3600*8)) 
+                setHTTPStatus("400", "The delivery time is too early");
 
             $idOder = uniqid();
             $orderPrice = 0;
-            $orderTime = new DateTime();
-            $orderTime = str_replace("T", " ", substr(gmdate(DATE_ATOM, $orderTime->getTimestamp()), 0, 19));
+            $orderTime = str_replace("T", " ", substr(
+                gmdate(DATE_ATOM, ($orderTime->getTimestamp() + 3600*8)), 0, 19));
             $deliveryTime = str_replace("T", " ", substr($requestData->body->deliveryTime, 0, 19));
             $address = $requestData->body->address;
-
-            if ($orderTime >= $deliveryTime) setHTTPStatus("400", "The order time is later than the delivery time");
 
             $resultBasket = query(
                 "SELECT price, amount FROM dish_basket

@@ -1,6 +1,6 @@
 <?php
 
-    include_once 'scripts/headers.php';
+    include_once 'scripts/helpers/headers.php';
     include_once 'scripts/scriptsAPI/userAPI/userRegister.php';
     include_once 'scripts/scriptsAPI/userAPI/userLogin.php';
     include_once 'scripts/scriptsAPI/userAPI/userLogout.php';

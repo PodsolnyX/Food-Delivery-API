@@ -1,6 +1,6 @@
 <?php
 
-    include_once 'scripts/headers.php';
+    include_once 'scripts/helpers/headers.php';
     include_once 'scripts/scriptsAPI/dishAPI/dishGetInfo.php';
     include_once 'scripts/scriptsAPI/dishAPI/dishSetRating.php';
     include_once 'scripts/scriptsAPI/dishAPI/dishCheckRating.php';

@@ -1,7 +1,7 @@
 <?php
 
-    include_once 'scripts/router.php';
-    include_once 'scripts/database.php';
+    include_once 'scripts/helpers/router.php';
+    include_once 'scripts/helpers/database.php';
 
     header('Content-type: application/json');
     header('Accept: */*');

@@ -1,6 +1,6 @@
 <?php
 
-    include_once 'scripts/headers.php';
+    include_once 'scripts/helpers/headers.php';
     include_once 'scripts/scriptsAPI/orderAPI/orderGet.php';
     include_once 'scripts/scriptsAPI/orderAPI/orderGetList.php';
     include_once 'scripts/scriptsAPI/orderAPI/orderCreate.php';

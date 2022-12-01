@@ -1,5 +1,5 @@
 <?php
-    include_once 'scripts/headers.php';
+    include_once 'scripts/helpers/headers.php';
 
     function getData($method) {
         $data = new stdClass();
@@ -32,7 +32,7 @@
             $method = getMethod();
             $requestData = getData($method);
         
-            if (file_exists(dirname(realpath(dirname(__FILE__))).'/routers/' . $router . '.php')) {
+            if (file_exists(dirname(dirname(realpath(dirname(__FILE__)))).'/routers/' . $router . '.php')) {
                 include_once 'routers/' . $router . '.php';
                 route($method, $urlList, $requestData); 
             }
