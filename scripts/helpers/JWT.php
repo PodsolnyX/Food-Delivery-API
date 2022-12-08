@@ -10,7 +10,7 @@
 
         $nowTime = new DateTime();
         $payload['nbf'] = $nowTime->getTimestamp();
-        $payload['exp'] = $nowTime->getTimestamp() + 3600;
+        $payload['exp'] = $nowTime->getTimestamp() + 14400;
         $payload['iat'] = $nowTime->getTimestamp();
         $payload['iss'] = "http://localhost/";
         $payload['aud'] = "http://localhost/";

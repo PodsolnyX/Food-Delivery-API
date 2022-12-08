@@ -16,7 +16,7 @@
 
             if ($resultOrder != null) {
 
-                if ($resultOrder["idOrder"] != $idUser) setHTTPStatus("403");
+                if ($resultOrder["idUser"] != $idUser) setHTTPStatus("403");
 
                 $resultBasket = query(
                     "SELECT dish.idDish, name, price, amount, image FROM dish_basket
@@ -31,9 +31,9 @@
                     $dishes[] = [
                         "id" => $row["idDish"],
                         "name" => $row["name"],
-                        "price" => $row["price"],
-                        "totalPrice" => $row["price"]*$row["amount"],
-                        "amount" => $row["amount"],
+                        "price" => floatval($row["price"]),
+                        "totalPrice" => floatval($row["price"]*$row["amount"]),
+                        "amount" => intval($row["amount"]),
                         "image" => $row["image"]
                     ];
                 }
@@ -43,7 +43,7 @@
                     "orderTime" => str_replace(" ", "T", $resultOrder["orderTime"]) . ".000Z",
                     "deliveryTime" => str_replace(" ", "T", $resultOrder["deliveryTime"]) . ".000Z",
                     "status" => $resultOrder["status"],
-                    "price" => $resultOrder["price"],
+                    "price" => floatval($resultOrder["price"]),
                     "dishes" => $dishes,
                     "address" => $resultOrder["address"]
                 ];

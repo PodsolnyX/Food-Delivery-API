@@ -14,7 +14,7 @@
 
         if (is_null($user)) {
 
-            $idUser = uniqid();
+            $idUser = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
             $password = hash("sha1", $requestData->body->password);
             $fullName = $requestData->body->fullName;
             $address = $requestData->body->address;

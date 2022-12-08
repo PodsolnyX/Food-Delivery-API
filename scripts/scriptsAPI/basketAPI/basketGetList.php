@@ -23,9 +23,9 @@
                 $basket[] = [
                     "id" => $row["idDish"],
                     "name" => $row["name"],
-                    "price" => $row["price"],
-                    "totalPrice" => $row["price"]*$row["amount"],
-                    "amount" => $row["amount"],
+                    "price" => floatval($row["price"]),
+                    "totalPrice" => floatval($row["price"]*$row["amount"]),
+                    "amount" => intval($row["amount"]),
                     "image" => $row["image"]
                 ];
             }

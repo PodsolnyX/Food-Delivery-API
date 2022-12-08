@@ -5,7 +5,6 @@
     include_once 'scripts/helpers/database.php';
 
     function createOrder($requestData) {
-
         $token = getTokenFromHeader();
         
         if (isTokenValid($token)) {
@@ -16,10 +15,13 @@
             if (strtotime($requestData->body->deliveryTime) < ($orderTime->getTimestamp() + 3600*8)) 
                 setHTTPStatus("400", "The delivery time is too early");
 
-            $idOder = uniqid();
+            if (strtotime($requestData->body->deliveryTime) > ($orderTime->getTimestamp() + 3600*8 + 3600*24*7))
+                setHTTPStatus("400", "The delivery time is too late");
+
+            $idOder = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
             $orderPrice = 0;
             $orderTime = str_replace("T", " ", substr(
-                gmdate(DATE_ATOM, ($orderTime->getTimestamp() + 3600*8)), 0, 19));
+                gmdate(DATE_ATOM, ($orderTime->getTimestamp() + 3600*7)), 0, 19));
             $deliveryTime = str_replace("T", " ", substr($requestData->body->deliveryTime, 0, 19));
             $address = $requestData->body->address;
 

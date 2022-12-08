@@ -22,7 +22,7 @@
                     "orderTime" => str_replace(" ", "T", $row["orderTime"]) . ".000Z",
                     "deliveryTime" => str_replace(" ", "T", $row["deliveryTime"]) . ".000Z",
                     "status" => $row["status"],
-                    "price" => $row["price"]
+                    "price" => floatval($row["price"])
                 ];
             }
 

@@ -43,10 +43,10 @@
                 "id" => $dish["idDish"],
                 "name" => $dish["name"],
                 "description" => $dish["description"],
-                "price" => $dish["price"],
+                "price" => floatval($dish["price"]),
                 "image" => $dish["image"],
-                "vegetarian" => $dish["vegetarian"] == 0 ? 0 : 1,
-                "rating" => $dish["rating"],
+                "vegetarian" => $dish["vegetarian"] == 0 ? false : true,
+                "rating" => $dish["rating"] == null ? null : floatval($dish["rating"]),
                 "category" => $dish["category"]
             ];
         }

@@ -10,7 +10,7 @@
         switch ($method) {
             case 'POST':
                 if ($urlList[3] == 'rating' && $urlList[4] == null){
-                    setRatingDish($urlList[2], $requestData->body->ratingScore);
+                    setRatingDish($urlList[2], $_GET["ratingScore"]);
                 }
                 else {
                     setHTTPStatus("404", "Method not found");

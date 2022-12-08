@@ -14,7 +14,10 @@
 
             $idUser = findUserIDByToken($token);
 
-            $result = query("SELECT id FROM dish_basket WHERE idUser = '$idUser' AND idDish = '$idDish' AND idOrder IS NOT NULL");
+            $result = query(
+                "SELECT id FROM dish_basket 
+                WHERE idUser = '$idUser' AND idDish = '$idDish' AND idOrder IS NOT NULL"
+            );
 
             if ($result != null) echo json_encode(true);
             else echo json_encode(false);
